@@ -298,9 +298,9 @@ const Chat: FC<IChatProps> = ({
   }
 
   return (
-    <div className={cn(!feedbackDisabled && 'px-3.5', 'h-full')}>
+    <div className={cn(!feedbackDisabled && 'px-3.5', 'h-full relative')}>
       {/* Chat List */}
-      <div className="h-full space-y-[30px]">
+      <div className="overflow-y-auto max-h-[calc(100% - 60px)] space-y-[30px]">
         {chatList.map((item) => {
           if (item.isAnswer) {
             const isLast = item.id === chatList[chatList.length - 1].id
@@ -317,7 +317,7 @@ const Chat: FC<IChatProps> = ({
       </div>
       {
         !isHideSendInput && (
-          <div className={cn(!feedbackDisabled && '!left-3.5 !right-3.5', 'absolute z-10 bottom-0 left-0 right-0')}>
+          <div className={cn(!feedbackDisabled && '!left-3.5 !right-3.5', 'relative z-10 bottom-0 left-0 right-0')}>
             <div className="positive">
               <AutoHeightTextarea
                 value={query}
