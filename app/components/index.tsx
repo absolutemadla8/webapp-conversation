@@ -9,7 +9,6 @@ import useConversation from '@/hooks/use-conversation'
 import Toast from '@/app/components/base/toast'
 import Sidebar from '@/app/components/sidebar'
 import ConfigSence from '@/app/components/config-scence'
-import Header from '@/app/components/header'
 import { fetchAppParams, fetchChatList, fetchConversations, sendChatMessage, updateFeedback } from '@/service'
 import type { ConversationItem, Feedbacktype, IChatItem, PromptConfig } from '@/types/app'
 import Chat from '@/app/components/chat'
@@ -379,56 +378,93 @@ const Main: FC = () => {
     return <Loading type='app' />
 
   return (
-    <div className='bg-gray-100'>
-      <Header
-        title={APP_INFO.title}
-        isMobile={isMobile}
-        onShowSideBar={showSidebar}
-        onCreateNewChat={() => handleConversationIdChange('-1')}
-      />
-      <div className="flex rounded-t-2xl bg-white overflow-hidden">
-        {/* sidebar */}
-        {!isMobile && renderSidebar()}
-        {isMobile && isShowSidebar && (
-          <div className='fixed inset-0 z-50'
-            style={{ backgroundColor: 'rgba(35, 56, 118, 0.2)' }}
-            onClick={hideSidebar}
-          >
-            <div className='inline-block' onClick={e => e.stopPropagation()}>
-              {renderSidebar()}
+    <div className='bg-gray-100 mb-20'>
+      <div className="fixed top-0 left-0 right-0 z-10 backdrop-blur-md border-b border-neutral-200 bg-stone-100">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex gap-6">
+              <a href="https://dexa.ai/#podcasts" className="text-slate-600">
+                <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="currentColor">
+                  <path fill-rule="evenodd" d="M64 0H0v16.942h.001c8.317 0 15.059 6.742 15.059 15.06 0 8.316-6.742 15.058-15.059 15.058H0V64h64V0Z" clip-rule="evenodd"></path>
+                </svg>
+              </a>
+              <a href="https://dexa.ai/huberman" className="text-lg font-medium uppercase cursor-pointer">Andrew Huberman AI</a>
+            </div>
+            <a href="https://dexa.ai/huberman" className="flex items-center gap-1 px-4 py-2 border rounded-full text-sm font-medium cursor-pointer">Ask</a>
+          </div>
+        </div>
+      </div>
+      <div className="min-h-screen bg-white text-neutral-900">
+        <div className="container mx-auto px-6 md:px-20 pt-24">
+
+          <div className="flex flex-row md:flex-row gap-10 mb-10">
+            <div className="flex flex-col h-96 object-left mb-6">
+              <ConfigSence
+                conversationName={conversationName}
+                hasSetInputs={hasSetInputs}
+                isPublicVersion={isShowPrompt}
+                siteInfo={APP_INFO}
+                promptConfig={promptConfig}
+                onStartChat={handleStartChat}
+                canEidtInpus={canEditInpus}
+                savedInputs={currInputs as Record<string, any>}
+                onInputsChange={setCurrInputs}
+              ></ConfigSence>
+              {
+                hasSetInputs && (
+                  <div className='relative h-96 mt-20' ref={chatListDomRef}>
+                    <Chat
+                      chatList={chatList}
+                      onSend={handleSend}
+                      onFeedback={handleFeedback}
+                      isResponsing={isResponsing}
+                      checkCanSend={checkCanSend}
+                      controlFocus={controlFocus}
+                    />
+                  </div>)
+              }
+            </div>
+            <div className="w-full md:w-1/3">
+              <h2 className="text-lg font-medium text-neutral-600 mb-4">Popular Topics</h2>
+              <ul className="flex flex-wrap gap-2">
+                <li className="bg-blue-100 px-3 py-1 rounded-full">Sleep</li>
+                <li className="bg-blue-100 px-3 py-1 rounded-full">Neuroscience</li>
+                <li className="bg-blue-100 px-3 py-1 rounded-full">Vision</li>
+
+              </ul>
             </div>
           </div>
-        )}
-        {/* main */}
-        <div className='flex-grow flex flex-col h-[calc(100vh_-_3rem)] overflow-y-auto'>
-          <ConfigSence
-            conversationName={conversationName}
-            hasSetInputs={hasSetInputs}
-            isPublicVersion={isShowPrompt}
-            siteInfo={APP_INFO}
-            promptConfig={promptConfig}
-            onStartChat={handleStartChat}
-            canEidtInpus={canEditInpus}
-            savedInputs={currInputs as Record<string, any>}
-            onInputsChange={setCurrInputs}
-          ></ConfigSence>
 
-          {
-            hasSetInputs && (
-              <div className='relative grow h-[200px] pc:w-[794px] max-w-full mobile:w-full pb-[66px] mx-auto mb-3.5 overflow-hidden'>
-                <div className='h-full overflow-y-auto' ref={chatListDomRef}>
-                  <Chat
-                    chatList={chatList}
-                    onSend={handleSend}
-                    onFeedback={handleFeedback}
-                    isResponsing={isResponsing}
-                    checkCanSend={checkCanSend}
-                    controlFocus={controlFocus}
-                  />
-                </div>
-              </div>)
-          }
+          <div className="mb-10">
+            <h2 className="text-lg font-medium text-neutral-600 mb-4">Popular Questions</h2>
+            <div className="flex flex-col md:flex-row gap-4 overflow-x-auto">
+              <div className="bg-white p-4 rounded-xl w-full md:w-1/4">
+                <h3 className="text-md font-medium mb-2">How does sleep affect the brain?</h3>
+                <p>Short description or answer...</p>
+              </div>
+              <div className="bg-white p-4 rounded-xl w-full md:w-1/4">
+                <h3 className="text-md font-medium mb-2">What are the benefits of meditation?</h3>
+                <p>Short description or answer...</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-20">
+            <h2 className="text-lg font-medium text-neutral-600 mb-4">Recent Huberman Lab Episodes</h2>
+            <div className="flex gap-4 overflow-x-auto">
+              <div className="bg-gray-100 p-4 rounded-xl w-64">
+                <h3 className="text-md font-medium mb-2">Episode 1: The Science of Sleep</h3>
+                <p>Short description...</p>
+              </div>
+              <div className="bg-gray-100 p-4 rounded-xl w-64">
+                <h3 className="text-md font-medium mb-2">Episode 2: The Power of Vision</h3>
+                <p>Short description...</p>
+              </div>
+
+            </div>
+          </div>
         </div>
+
       </div>
     </div>
   )
